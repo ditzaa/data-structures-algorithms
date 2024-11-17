@@ -139,6 +139,18 @@ public class WeightedQuickUnionPathCompressionUF {
         count--;
     }
 
+    public int[] getParent() {
+        return parent;
+    }
+
+    public int[] getSize() {
+        return size;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
     /**
      * Reads an integer {@code n} and a sequence of pairs of integers
      * (between {@code 0} and {@code n-1}) from standard input, where each integer
@@ -149,7 +161,10 @@ public class WeightedQuickUnionPathCompressionUF {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-
+        WeightedQuickUnionPathCompressionUF uf = new WeightedQuickUnionPathCompressionUF(3*3 + 2);
+        int[] parent = uf.getParent();
+        for (int i=0; i<parent.length; i++) {
+            System.out.println(i);
+        }
     }
-
 }
