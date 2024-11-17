@@ -1,8 +1,10 @@
 public class Percolation {
-    int gridSize;
-    int[][] grid; //grid with the open status (0 = not open; 1 = open) of each object of the system
-    int[][] parentGrid; //structure to connect UnionFind with the openStatusGrid
-    WeightedQuickUnionPathCompressionUF UnionFindStructure;
+    private int gridSize;
+    private int[][] grid; //grid with the open status (0 = not open; 1 = open) of each object of the system
+    private int[][] parentGrid; //structure to connect UnionFind with the openStatusGrid
+    private WeightedQuickUnionPathCompressionUF UnionFindStructure;
+    private int[] parent;//parent from UF structure, as well as index of the virtual bottom site
+    private int parentSize;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
@@ -13,25 +15,17 @@ public class Percolation {
         this.gridSize = n;
         this.grid = new int[n+1][n+1];
         this.parentGrid = new int[n+1][n+1];
-        this.UnionFindStructure = new WeightedQuickUnionPathCompressionUF(n*n + 2);
-//        for (int i = 0; i <= gridSize; i++) {
-//            UnionFindStructure.union(0, i);
-//            int bottomVirtualSite = n+1;
-//            UnionFindStructure.union(bottomVirtualSite, bottomVirtualSite-1);
-//        }
+        this.parentSize = n*n + 2; //+2 for virtual sites
+        this.UnionFindStructure = new WeightedQuickUnionPathCompressionUF(parentSize);
+        this.parent = UnionFindStructure.getParent();
+        this.parent[n*n + 1] = 0;
 
         //int bottomVirtualSite = n+1;
         int parentIndex = 1;
         int[] parent = UnionFindStructure.getParent();
         //initialize all structures
         for (int i = 1; i <= n; i++) {
-            //connect virtual sites to the top and bottom of the grid
-            //UnionFindStructure.union(0, i);
-            //bottomVirtualSite = n;
-            //UnionFindStructure.union(bottomVirtualSite, bottomVirtualSite-1);
             for (int j = 1; j <= n; j++) {
-                //initialize openStatusGrid element
-                //grid[i][j] = 0;
                 //initialize connectionGrid elements
                 parentGrid[i][j] = parent[parentIndex];
                 parentIndex++;
@@ -42,7 +36,35 @@ public class Percolation {
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
         if (validateIndex(row) && validateIndex(col)) {
+            grid[row][col] = 1;
+            if (row == 1) {
+                int previousRoot = parentGrid[row][col];
+                parentGrid[row][col] = 0;
+                UnionFindStructure.union(0, previousRoot); //conect with top virtual site
+            } else if (row == gridSize) {
+                int previousRoot = parentGrid[row][col];
+                parentGrid[row][col] = 0;
+                UnionFindStructure.union(parentSize - 1, previousRoot); //connect with bottom virtual site
+            }
 
+            int currentOpenedNode = parentGrid[row][col];
+            if (validateIndexToConnectSites(row-1, col) && isOpen(row-1, col)) { //upper node
+                int nodeToConnect = parentGrid[row-1][col];
+                UnionFindStructure.union(nodeToConnect, currentOpenedNode);
+                parentGrid[row][col] = parentGrid[row-1][col];
+            }
+            if (validateIndexToConnectSites(row, col+1) &&isOpen(row, col+1)) { //right node
+                int nodeToConnect = parentGrid[row][col+1];
+                UnionFindStructure.union(nodeToConnect, currentOpenedNode);
+            }
+            if (validateIndexToConnectSites(row+1, col) &&isOpen(row+1, col)) { //lower node
+                int nodeToConnect = parentGrid[row+1][col];
+                UnionFindStructure.union(nodeToConnect, currentOpenedNode);
+            }
+            if (validateIndexToConnectSites(row, col-1) && isOpen(row, col-1)) { //left node
+                int nodeToConnect = parentGrid[row][col-1];
+                UnionFindStructure.union(nodeToConnect, currentOpenedNode);
+            }
         } else {
             throw new IllegalArgumentException("Indices (" + row + ", " + col + ")" +
                     " are out of bounds (1, " + gridSize + ")");
@@ -52,12 +74,15 @@ public class Percolation {
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
         if (validateIndex(row) && validateIndex(col)) {
-
+            if (grid[row][col] == 1) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new IllegalArgumentException("Indices (" + row + ", " + col + ")" +
                     " are out of bounds (1, " + gridSize + ")");
         }
-        return false;
     }
 
     // is the site (row, col) full?
@@ -82,9 +107,19 @@ public class Percolation {
     }
 
     private boolean validateIndex(int index) {
-        if ( index <= 0 || index < gridSize) {
+        if ( index <= 0 || index > gridSize) {
             return false;
         }
+        return true;
+    }
+
+    private boolean validateIndexToConnectSites(int row, int col) {
+        if (row <= 0 || row > gridSize) {
+            return false;
+        }
+        if (col <= 0 || col > gridSize)
+            return false;
+
         return true;
     }
 
@@ -93,8 +128,8 @@ public class Percolation {
     }
 
     private void displayGrid(int[][] grid) {
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
+        for (int i = 1; i < grid.length; i++) {
+            for (int j = 1; j < grid[i].length; j++) {
                 System.out.printf("%4d", grid[i][j]);
             }
             System.out.println();
@@ -142,9 +177,7 @@ public class Percolation {
         UnionFindStructure = unionFindStructure;
     }
 
-    // test client (optional)
-    public static void main(String[] args) {
-        Percolation percolation = new Percolation(5);
+    private static void displayStructures(Percolation percolation) {
         System.out.println("Grid openStatus:");
         percolation.displayGrid(percolation.grid);
 
@@ -153,5 +186,15 @@ public class Percolation {
 
         System.out.println("Parent grid");
         percolation.displayVector(percolation.getUnionFindStructure().getParent());
+    }
+
+    // test client (optional)
+    public static void main(String[] args) {
+        Percolation percolation = new Percolation(5);
+        percolation.open(1, 2);
+        percolation.open(2, 2);
+        percolation.open(5, 3);
+        percolation.
+        displayStructures(percolation);
     }
 }
