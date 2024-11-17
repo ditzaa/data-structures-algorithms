@@ -5,6 +5,7 @@ public class Percolation {
     private WeightedQuickUnionPathCompressionUF UnionFindStructure;
     private int[] parent;//parent from UF structure, as well as index of the virtual bottom site
     private int parentSize;
+    private int numberOfOpenSites;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
@@ -18,11 +19,12 @@ public class Percolation {
         this.parentSize = n*n + 2; //+2 for virtual sites
         this.UnionFindStructure = new WeightedQuickUnionPathCompressionUF(parentSize);
         this.parent = UnionFindStructure.getParent();
-        this.parent[n*n + 1] = 0;
+        this.numberOfOpenSites = 0;
+        //this.parent[n*n + 1] = 0;
 
         //int bottomVirtualSite = n+1;
         int parentIndex = 1;
-        int[] parent = UnionFindStructure.getParent();
+        //int[] parent = UnionFindStructure.getParent();
         //initialize all structures
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= n; j++) {
@@ -40,10 +42,11 @@ public class Percolation {
             if (row == 1) {
                 int previousRoot = parentGrid[row][col];
                 parentGrid[row][col] = 0;
+                numberOfOpenSites++;
                 UnionFindStructure.union(0, previousRoot); //conect with top virtual site
             } else if (row == gridSize) {
                 int previousRoot = parentGrid[row][col];
-                parentGrid[row][col] = 0;
+                parentGrid[row][col] = parentSize - 1;
                 UnionFindStructure.union(parentSize - 1, previousRoot); //connect with bottom virtual site
             }
 
@@ -64,6 +67,7 @@ public class Percolation {
             if (validateIndexToConnectSites(row, col-1) && isOpen(row, col-1)) { //left node
                 int nodeToConnect = parentGrid[row][col-1];
                 UnionFindStructure.union(nodeToConnect, currentOpenedNode);
+                System.out.println("Am intrat pe aici jaja");
             }
         } else {
             throw new IllegalArgumentException("Indices (" + row + ", " + col + ")" +
@@ -88,21 +92,28 @@ public class Percolation {
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         if (validateIndex(row) && validateIndex(col)) {
+            if (parentGrid[row][col] == 0) {
+                return true;
+            }
 
+            return false;
         } else {
             throw new IllegalArgumentException("Indices (" + row + ", " + col + ")" +
                     " are out of bounds (1, " + gridSize + ")");
         }
-        return false;
     }
 
     // returns the number of open sites
     public int numberOfOpenSites() {
-        return 0;
+        return numberOfOpenSites;
     }
 
     // does the system percolate?
     public boolean percolates() {
+        if (UnionFindStructure.connected(0, parentSize - 1)){
+            return true;
+        }
+
         return false;
     }
 
@@ -144,7 +155,7 @@ public class Percolation {
         System.out.println();
     }
 
-    //getter and setters if needed
+    //getters and setters
     protected int getGridSize() {
         return gridSize;
     }
@@ -186,15 +197,25 @@ public class Percolation {
 
         System.out.println("Parent grid");
         percolation.displayVector(percolation.getUnionFindStructure().getParent());
+        System.out.println("--------------------------------");
     }
 
     // test client (optional)
     public static void main(String[] args) {
         Percolation percolation = new Percolation(5);
         percolation.open(1, 2);
+        //displayStructures(percolation);
         percolation.open(2, 2);
-        percolation.open(5, 3);
-        percolation.
+        //displayStructures(percolation);
+        percolation.open(3, 2);
         displayStructures(percolation);
+//        percolation.open(4, 2);
+//        displayStructures(percolation);
+        percolation.open(4, 3);
+        displayStructures(percolation);
+        percolation.open(5, 3);
+        //System.out.println();
+        displayStructures(percolation);
+        System.out.println(percolation.percolates());
     }
 }
