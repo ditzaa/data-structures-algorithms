@@ -7,6 +7,7 @@
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
     private int numberOfElements;
@@ -75,17 +76,47 @@ public class Deque<Item> implements Iterable<Item> {
 
     // remove and return the item from the front
     public Item removeFirst() {
-        return null;
+        Node oldFirst = first;
+        Item oldFirstItem = oldFirst.item;
+        first = first.next;
+        oldFirst = null;
+        numberOfElements--;
+        return oldFirstItem;
     }
 
     // remove and return the item from the back
     public Item removeLast() {
-        return null;
+        Node oldLast = last;
+        Item oldLastItem = oldLast.item;
+        Node currentNode = first;
+        while (currentNode.next != last) {
+            currentNode = currentNode.next;
+        }
+        last = currentNode;
+        last.next = null;
+        oldLast = null;
+        numberOfElements--;
+        return oldLastItem;
     }
 
     // return an iterator over items in order from front to back
     public Iterator<Item> iterator() {
-        return null;
+        return new Deque.DequeIterator();
+    }
+
+    private class DequeIterator implements Iterator<Item> {
+        private Node current = first;
+
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        public Item next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            Item item = current.item;
+            current = current.next;
+            return item;
+        }
     }
 
     private void display() {
@@ -95,7 +126,7 @@ public class Deque<Item> implements Iterable<Item> {
             StdOut.print(currentNode.item + " ");
             currentNode = currentNode.next;
         }
-        StdOut.println();
+        StdOut.println("\n");
     }
 
 
@@ -106,11 +137,19 @@ public class Deque<Item> implements Iterable<Item> {
         integersDeque.addFirst(1);
         integersDeque.addFirst(2);
         integersDeque.addFirst(3);
-        integersDeque.display();
+        // integersDeque.display();
         integersDeque.addLast(4);
         integersDeque.addLast(5);
         integersDeque.addLast(6);
         integersDeque.display();
+        integersDeque.removeFirst();
+        integersDeque.removeLast();
+        integersDeque.display();
+
+        StdOut.println("Testing iterator:");
+        for (int i : integersDeque) {
+            StdOut.println(i);
+        }
 
     }
 }
