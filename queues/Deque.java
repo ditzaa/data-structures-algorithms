@@ -9,6 +9,7 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+// deque implementation using a linked list
 public class Deque<Item> implements Iterable<Item> {
     private int numberOfElements;
     private Node first;
@@ -76,6 +77,10 @@ public class Deque<Item> implements Iterable<Item> {
 
     // remove and return the item from the front
     public Item removeFirst() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Cannot remove first element, deque is empty");
+        }
+
         Node oldFirst = first;
         Item oldFirstItem = oldFirst.item;
         first = first.next;
@@ -117,6 +122,11 @@ public class Deque<Item> implements Iterable<Item> {
             current = current.next;
             return item;
         }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Remove operation is not supported");
+        }
     }
 
     private void display() {
@@ -132,7 +142,6 @@ public class Deque<Item> implements Iterable<Item> {
 
     // unit testing (required)
     public static void main(String[] args) {
-        // unit test creating a deque and the adding functions
         Deque<Integer> integersDeque = new Deque<>();
         integersDeque.addFirst(1);
         integersDeque.addFirst(2);
