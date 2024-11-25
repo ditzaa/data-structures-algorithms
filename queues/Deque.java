@@ -91,10 +91,14 @@ public class Deque<Item> implements Iterable<Item> {
 
     // remove and return the item from the back
     public Item removeLast() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Cannot remove first element, deque is empty");
+        }
+
         Node oldLast = last;
         Item oldLastItem = oldLast.item;
         Node currentNode = first;
-        while (currentNode.next != last) {
+        while (currentNode.next != null && currentNode.next != last) {
             currentNode = currentNode.next;
         }
         last = currentNode;
@@ -106,7 +110,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // return an iterator over items in order from front to back
     public Iterator<Item> iterator() {
-        return new Deque.DequeIterator();
+        return new DequeIterator();
     }
 
     private class DequeIterator implements Iterator<Item> {
@@ -142,23 +146,31 @@ public class Deque<Item> implements Iterable<Item> {
 
     // unit testing (required)
     public static void main(String[] args) {
-        Deque<Integer> integersDeque = new Deque<>();
-        integersDeque.addFirst(1);
-        integersDeque.addFirst(2);
-        integersDeque.addFirst(3);
+        // Deque<Integer> integersDeque = new Deque<>();
+        // integersDeque.addFirst(1);
+        // integersDeque.addFirst(2);
+        // integersDeque.addFirst(3);
+        // // integersDeque.display();
+        // integersDeque.addLast(4);
+        // integersDeque.addLast(5);
+        // integersDeque.addLast(6);
         // integersDeque.display();
-        integersDeque.addLast(4);
-        integersDeque.addLast(5);
-        integersDeque.addLast(6);
-        integersDeque.display();
-        integersDeque.removeFirst();
-        integersDeque.removeLast();
-        integersDeque.display();
+        // int removedFirst = integersDeque.removeFirst();
+        // int removedLast = integersDeque.removeLast();
+        // integersDeque.display();
+        //
+        // StdOut.println("Testing iterator:");
+        // for (int i : integersDeque) {
+        //     StdOut.println(i);
+        // }
 
-        StdOut.println("Testing iterator:");
-        for (int i : integersDeque) {
-            StdOut.println(i);
-        }
-
+        Deque<Integer> deque = new Deque<>();
+        deque.addFirst(1);
+        deque.iterator();
+        deque.removeFirst();
+        deque.iterator();
+        deque.addFirst(3);
+        deque.iterator();
+        deque.removeLast();
     }
 }

@@ -37,15 +37,15 @@
     <option name="myRunOnSave" value="true" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Deque.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/Deque.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RandomizedQueue.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="OptimizeOnSaveOptions">
     <option name="myRunOnSave" value="true" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectFrameBounds">
     <option name="x" value="106" />
     <option name="y" value="23" />
@@ -89,15 +89,29 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Deque.executor": "Run",
+    "Application.Permutation.executor": "Run",
     "Application.RandomizedQueue.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.RandomizedQueue">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\ditzaa\java\Repo\data-structures-algorithms\queues" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.Deque">
     <configuration name="Deque" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="Deque" />
       <module name="Algorithms, Part I" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Permutation" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Permutation" />
+      <module name="Algorithms, Part I" />
+      <option name="PROGRAM_PARAMETERS" value="3" />
+      <option name="REDIRECT_INPUT" value="true" />
+      <option name="INPUT_FILE" value="permutation5.txt" />
       <method v="2" />
     </configuration>
     <configuration name="RandomizedQueue" type="Application" factoryName="Application">
@@ -108,6 +122,11 @@
     <configuration default="true" type="Application" factoryName="Application">
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Application.Deque" />
+      <item itemvalue="Application.Permutation" />
+      <item itemvalue="Application.RandomizedQueue" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="project-level" UseSingleDictionary="true" transferred="true" />
   <component name="TodoView">

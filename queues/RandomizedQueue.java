@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
-    private static final int INIT_CAPACITY = 4;
+    private static final int INIT_CAPACITY = 8;
 
     private Item[] array;
     private int numberOfItems;
@@ -61,7 +61,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         for (int i = randomIndex; i < numberOfItems - 1; i++) {
             array[i] = array[i + 1];
         }
-        StdOut.println("Last elem index: " + numberOfItems);
+        // StdOut.println("Last elem index: " + numberOfItems);
         array[--numberOfItems] = null;
         // numberOfItems--;
         return itemToRemove;
@@ -132,6 +132,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         randomizedQueue.display();
         StdOut.println("Random item: " + randomizedQueue.sample());
 
+        // tested iterator
         int n = 5;
         RandomizedQueue<Integer> queue = new RandomizedQueue<Integer>();
         for (int i = 0; i < n; i++)
