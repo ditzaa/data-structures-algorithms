@@ -38,6 +38,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/BruteCollinearPoints.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/FastCollinearPoints.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/LineSegment.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/Point.java" root0="SKIP_INSPECTION" />
   </component>
@@ -90,15 +91,33 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.BruteCollinearPoints.executor": "Run",
+    "Application.FastCollinearPoints.executor": "Debug",
     "Application.Point.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "D:/ditzaa/java/Repo/data-structures-algorithms/collinear"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.BruteCollinearPoints">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\ditzaa\java\Repo\data-structures-algorithms\collinear" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="SlopeOrder" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.FastCollinearPoints">
     <configuration name="BruteCollinearPoints" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="BruteCollinearPoints" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="input9.txt" />
+      <option name="PROGRAM_PARAMETERS" value="ceva.txt" />
+      <method v="2" />
+    </configuration>
+    <configuration name="FastCollinearPoints" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="FastCollinearPoints" />
+      <module name="Algorithms, Part I" />
+      <option name="PROGRAM_PARAMETERS" value="ceva.txt" />
       <method v="2" />
     </configuration>
     <configuration name="Point" type="Application" factoryName="Application">
@@ -110,6 +129,7 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Application.FastCollinearPoints" />
       <item itemvalue="Application.BruteCollinearPoints" />
       <item itemvalue="Application.Point" />
     </list>
@@ -150,15 +170,5 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
     </layout>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <breakpoint enabled="true" type="java-exception">
-          <properties class="java.lang.NullPointerException" package="java.lang" />
-          <option name="timeStamp" value="5" />
-        </breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

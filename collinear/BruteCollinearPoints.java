@@ -5,6 +5,7 @@
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Arrays;
@@ -56,7 +57,8 @@ public class BruteCollinearPoints {
                                     points[i], points[j], points[k], points[l]);
                             LineSegment newLineSegment =
                                     new LineSegment(orderedPoints[0], orderedPoints[3]);
-                            if (isLineSegmentAdded(newLineSegment) == false) {
+                            if (newLineSegment != null &&
+                                    isLineSegmentAdded(newLineSegment) == false) {
                                 // StdOut.println(orderedPoints[0].toString() + " -> "
                                 //                        + points[3].toString());
                                 lineSegments[numberOfSegments++] = newLineSegment;
@@ -76,7 +78,12 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return lineSegments;
+        // reallocate memory in order to avoid null elements
+        LineSegment[] newLineSegments = new LineSegment[numberOfSegments];
+        for (int i = 0; i < numberOfSegments; i++) {
+            newLineSegments[i] = lineSegments[i];
+        }
+        return newLineSegments;
     }
 
     private void resizeLineSegmentsArray() {
@@ -120,6 +127,15 @@ public class BruteCollinearPoints {
         return pointsList;
     }
 
+    private void printCoordinates() {
+        // print the points coordinates
+        // StdOut.println();
+        // for (int i = 0; i < n; i++) {
+        //     StdOut.print(points[i] + " ");
+        // }
+        // StdOut.println();
+    }
+
     public static void main(String[] args) {
         // read the n points from a file
         In in = new In(args[0]);
@@ -132,13 +148,6 @@ public class BruteCollinearPoints {
             points[i] = new Point(x, y);
         }
 
-        // print the points coordinates
-        // StdOut.println();
-        // for (int i = 0; i < n; i++) {
-        //     StdOut.print(points[i] + " ");
-        // }
-        // StdOut.println();
-
         BruteCollinearPoints bruteCollinearPoints = new BruteCollinearPoints(points);
         LineSegment[] lineSegments = bruteCollinearPoints.segments();
         StdOut.println("Line segments: ");
@@ -149,21 +158,22 @@ public class BruteCollinearPoints {
 
 
         // draw the points
-        // StdDraw.enableDoubleBuffering();
-        // StdDraw.setXscale(0, 32768);
-        // StdDraw.setYscale(0, 32768);
-        // for (Point p : points) {
-        //     p.draw();
-        // }
-        // StdDraw.show();
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
 
         // print and draw the line segments
-        // BruteCollinearPoints collinear = new BruteCollinearPoints(points);
-        // for (LineSegment segment : collinear.segments()) {
-        //     StdOut.println(segment);
-        //     segment.draw();
-        // }
-        // StdDraw.show();
+        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
+        StdDraw.show();
+
 
         // intiial testing
         // Point origin = new Point(0, 0);

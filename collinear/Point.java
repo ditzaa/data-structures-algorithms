@@ -111,13 +111,9 @@ public class Point implements Comparable<Point> {
     }
 
     private class SlopeComparator implements Comparator<Point> {
-        private Point invokingPoint;
-
-        public SlopeComparator() {
-            this.invokingPoint = new Point(0, 0);
-        }
 
         public int compare(Point p1, Point p2) {
+            Point invokingPoint = Point.this;
             return Double.compare(p1.slopeTo(invokingPoint), p2.slopeTo(invokingPoint));
         }
     }
