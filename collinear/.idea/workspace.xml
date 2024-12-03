@@ -91,7 +91,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.BruteCollinearPoints.executor": "Run",
-    "Application.FastCollinearPoints.executor": "Debug",
+    "Application.FastCollinearPoints.executor": "Run",
     "Application.Point.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "last_opened_file_path": "D:/ditzaa/java/Repo/data-structures-algorithms/collinear"
