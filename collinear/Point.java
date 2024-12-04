@@ -11,9 +11,7 @@
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class Point implements Comparable<Point> {
 
@@ -76,7 +74,7 @@ public class Point implements Comparable<Point> {
         }
         // slope is not a corner case and therefore is returned by its formula
         else {
-            return (this.y - that.y) / (this.x - that.x);
+            return (double) (that.y - this.y) / (that.x - this.x);
         }
     }
 
@@ -137,21 +135,18 @@ public class Point implements Comparable<Point> {
     public static void main(String[] args) {
         /* YOUR CODE HERE */
         Point origin = new Point(0, 0);
-        Point p1 = new Point(12, 34);
-        Point p2 = new Point(32, 53);
-        Point p3 = new Point(342, 324);
-        Point p4 = new Point(53, 21);
-        List<Point> pointList = new ArrayList<>();
-        pointList.add(p1);
-        pointList.add(p2);
-        pointList.add(p3);
-        pointList.add(p4);
-        Comparator<Point> comparator = p1.slopeOrder();
-        pointList.sort(comparator);
-        StdOut.println(pointList);
-        for (Point point : pointList) {
-            StdOut.print(point.slopeTo(origin) + " ");
-        }
-        StdOut.println();
+        // (10000, 0) - -Infinity
+        // (7000, 3000) - -1.0
+        // (3000, 7000) - -1.0
+        // (6000, 7000) - -1.0
+        // (0, 10000) - -1.0
+        // (3000, 4000) - 0.0
+        // (20000, 21000) - 2.0
+        // (14000, 15000) - 3.0
+        Point p1 = new Point(10000, 0);
+        Point p2 = new Point(6000, 7000);
+        Point p3 = new Point(6000, 7000);
+        // double slope = p1.slopeTo(p2);
+        StdOut.println(p2.compareTo(p3));
     }
 }

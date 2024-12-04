@@ -5,6 +5,7 @@
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
@@ -51,46 +52,62 @@ public class FastCollinearPoints {
             //  determine the slope it makes with p
             Point p = sortedPoints[i];
             // Sort the points according to the slopes they make with p
-            Comparator<Point> slopeComparator = points[i].slopeOrder();
+            Comparator<Point> slopeComparator = p.slopeOrder();
             Arrays.sort(aux, slopeComparator);
 
             // debugging
-            for (Point point : aux) {
-                StdOut.println(point + " - " + points[0].slopeTo(point));
+            StdOut.println("Refference point: " + p.toString());
+            for (Point q : aux) {
+                StdOut.println(q + " - " + p.slopeTo(q));
             }
-            StdOut.println();
-            break;
+
+            // 3 (or more) adjacent points are collinear (togheter with p),
+            // if they have equal slopes with respect to p.
+            nbOfCollinearPoints = 0;
+            List<Point> collinearPoints = new ArrayList<>();
+            for (int j = 0; j < aux.length - 1; j++) {
+                if (Double.compare(p.slopeTo(aux[j]), p.slopeTo(aux[j + 1])) == 0) {
+                    collinearPoints = new ArrayList<>();
+                    collinearPoints.add(p);
+                    while (j < aux.length - 1 &&
+                            Double.compare(p.slopeTo(aux[j]), p.slopeTo(aux[j + 1])) == 0) {
+                        nbOfCollinearPoints++;
+                        collinearPoints.add(aux[j]);
+                        j++;
+                    }
+                    j--;
+                    nbOfCollinearPoints++;
+                    if (j + 1 < aux.length) {
+                        collinearPoints.add(aux[j + 1]);
+                    }
+                    break;
+                }
+            }
+            // add line segment
+            StdOut.println("----------------------------------");
+            // StdOut.println("Vertical colliniar points?");
+            // for (Point q : collinearPoints) {
+            //     StdOut.println(q + " - " + p.slopeTo(q));
+            // }
+            // StdOut.println("----------------------------------");
+
+            if (nbOfCollinearPoints >= 3) {
+                collinearPoints.sort(Point::compareTo);
+                StdOut.println("Collinear points");
+                for (Point q : collinearPoints) {
+                    StdOut.println(q + " - " + p.slopeTo(q));
+                }
+                StdOut.println();
+
+                StdOut.println(p.toString() + " - " + collinearPoints.get(0));
+                if (p.compareTo(collinearPoints.get(0)) == 0) {
+                    Point lastCollinearPoint = collinearPoints.get(collinearPoints.size() - 1);
+                    LineSegment newLineSegment = new LineSegment(p, lastCollinearPoint);
+                    lineSegments.add(newLineSegment);
+                    numberOfSegments++;
+                }
+            }
         }
-        //     List<Point> collinearPoints = new ArrayList<>();
-        //     nbOfCollinearPoints = 1;
-        //     int iFirstSegment = -1;
-        //     for (int j = 0; j < pointsLength - 1; j++) {
-        //         if (i != j && points[i].slopeTo(points[j]) == points[i].slopeTo(points[j + 1])) {
-        //             iFirstSegment = j;
-        //             while (points[i].slopeTo(points[j]) == points[i].slopeTo(points[j + 1]) &&
-        //                     j < pointsLength - 2) {
-        //                 nbOfCollinearPoints++;
-        //                 j++;
-        //             }
-        //         }
-        //
-        //         // 3 (or more) adjacent points are collinear if they have the same slope
-        //         if (nbOfCollinearPoints >= 3) {
-        //             int iLastSegment = j;
-        //             for (int k = iFirstSegment; k <= iLastSegment; k++) {
-        //                 collinearPoints.add(points[k]);
-        //             }
-        //             collinearPoints.sort(Point::compareTo);
-        //             if (collinearPoints.get(0) == points[i]) {
-        //                 Point firstPoint = collinearPoints.get(0);
-        //                 Point lastPoint = collinearPoints.get(collinearPoints.size() - 1);
-        //                 numberOfSegments++;
-        //                 lineSegments.add(new LineSegment(firstPoint, lastPoint));
-        //             }
-        //         }
-        //         j--;
-        //     }
-        // }
     }
 
     // the number of line segments
@@ -123,20 +140,20 @@ public class FastCollinearPoints {
         }
 
         // draw the points
-        // StdDraw.enableDoubleBuffering();
-        // StdDraw.setXscale(0, 32768);
-        // StdDraw.setYscale(0, 32768);
-        // for (Point p : points) {
-        //     p.draw();
-        // }
-        // StdDraw.show();
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
 
         // print and draw the line segments
         FastCollinearPoints collinear = new FastCollinearPoints(points);
-        // for (LineSegment segment : collinear.segments()) {
-        //     StdOut.println(segment);
-        //     segment.draw();
-        // }
-        // StdDraw.show();
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
+        StdDraw.show();
     }
 }
