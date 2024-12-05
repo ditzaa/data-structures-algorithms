@@ -37,8 +37,8 @@
     <option name="myRunOnSave" value="true" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/BruteCollinearPoints.java" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/FastCollinearPoints.java" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/BruteCollinearPoints.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FastCollinearPoints.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LineSegment.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/Point.java" root0="SKIP_INSPECTION" />
   </component>
@@ -107,17 +107,17 @@
       <command value="SlopeOrder" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.FastCollinearPoints">
+  <component name="RunManager" selected="Application.BruteCollinearPoints">
     <configuration name="BruteCollinearPoints" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="BruteCollinearPoints" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="ceva.txt" />
+      <option name="PROGRAM_PARAMETERS" value="input400.txt" />
       <method v="2" />
     </configuration>
     <configuration name="FastCollinearPoints" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="FastCollinearPoints" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="input400.txt" />
+      <option name="PROGRAM_PARAMETERS" value="input10.txt" />
       <method v="2" />
     </configuration>
     <configuration name="Point" type="Application" factoryName="Application">

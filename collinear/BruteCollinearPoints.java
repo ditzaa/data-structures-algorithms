@@ -8,62 +8,70 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.List;
 
 public class BruteCollinearPoints {
     private int numberOfSegments;
-    private LineSegment[] lineSegments; // LineSegment(Point p, Point q)
-    private Comparator<Point> pointComparator;
+    private List<LineSegment> lineSegments; // LineSegment(Point p, Point q)
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
+        // check points array not null
         if (points == null) {
             throw new IllegalArgumentException("constructor argument is null");
         }
+
+        // check if points array has null elements
         int pointsLength = points.length;
         for (int i = 0; i < pointsLength; i++) {
             if (points[i] == null) {
-                throw new IllegalArgumentException("point at index " + points[i] + "is null");
+                throw new IllegalArgumentException("Point at index " + i + " is null");
             }
-            for (int j = i + 1; j < pointsLength; j++) {
-                if (points[i].compareTo(points[j]) == 0) {
-                    throw new IllegalArgumentException(
-                            "Two points at coordiantes: " + points[i].toString()
-                                    + " are the same");
-                }
+        }
+
+        // create a copy of the points array and sort it
+        Point[] sortedPoints = Arrays.copyOf(points, pointsLength);
+        Arrays.sort(sortedPoints);
+
+        // check if array has duplicates
+        for (int i = 0; i < pointsLength - 1; i++) {
+            if (sortedPoints[i].compareTo(sortedPoints[i + 1]) == 0) {
+                throw new IllegalArgumentException("Duplicate points: " + sortedPoints[i]);
             }
         }
 
         this.numberOfSegments = 0;
-        this.lineSegments = new LineSegment[10];
+        this.lineSegments = new ArrayList<>();
 
         // check each combination of 4 points from the input
         // if 4 points have equal slopes:
         // 1. check if the line segment made by them already exists
         // 2. if non-1., check if array needs to be resized and add it to it
+        Arrays.sort(points);
 
         for (int i = 0; i < pointsLength; i++) {
             for (int j = i + 1; j < pointsLength; j++) {
-                for (int k = j + 1; k < pointsLength &&
-                        areThreePointsCollinear(points[i], points[j], points[k]); k++) {
-                    for (int l = k + 1; l < pointsLength; l++) {
-                        if (areThreePointsCollinear(points[j], points[k], points[l])) {
-                            if (numberOfSegments == lineSegments.length - 1) {
-                                resizeLineSegmentsArray();
-                            }
-                            // slope order points
-                            Point[] orderedPoints = orderCollinearPoints(
-                                    points[i], points[j], points[k], points[l]);
-                            LineSegment newLineSegment =
-                                    new LineSegment(orderedPoints[0], orderedPoints[3]);
-                            if (newLineSegment != null &&
-                                    isLineSegmentAdded(newLineSegment) == false) {
-                                // StdOut.println(orderedPoints[0].toString() + " -> "
-                                //                        + points[3].toString());
-                                lineSegments[numberOfSegments++] = newLineSegment;
-                            }
+                for (int k = j + 1; k < pointsLength; k++) {
+                    if (arePointsCollinear(points[i], points[j], points[k])) {
+                        for (int l = k + 1; l < pointsLength; l++) {
+                            if (arePointsCollinear(points[i], points[j], points[k], points[l])) {
+                                Point[] orderedPoints = new Point[4];
+                                orderedPoints[0] = points[i];
+                                orderedPoints[1] = points[j];
+                                orderedPoints[2] = points[k];
+                                orderedPoints[3] = points[l];
+                                Arrays.sort(orderedPoints, Point::compareTo);
 
+                                if (orderedPoints[0].compareTo(points[i]) == 0 &&
+                                        orderedPoints[3].compareTo(points[l]) == 0) {
+                                    LineSegment newLineSegment =
+                                            new LineSegment(points[i], points[l]);
+                                    lineSegments.add(newLineSegment);
+                                    numberOfSegments++;
+                                }
+                            }
                         }
                     }
                 }
@@ -78,84 +86,39 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        // reallocate memory in order to avoid null elements
         LineSegment[] newLineSegments = new LineSegment[numberOfSegments];
-        for (int i = 0; i < numberOfSegments; i++) {
-            newLineSegments[i] = lineSegments[i];
+        for (int i = 0; i < lineSegments.size(); i++) {
+            if (lineSegments.get(i) != null) {
+                newLineSegments[i] = lineSegments.get(i);
+            }
         }
         return newLineSegments;
     }
 
-    private void resizeLineSegmentsArray() {
-        int arrayLength = this.lineSegments.length;
-        LineSegment[] newArray = new LineSegment[2 * arrayLength];
-        for (int i = 0; i < arrayLength; i++) {
-            newArray[i] = lineSegments[i];
-        }
-        lineSegments = newArray;
-    }
-
-    private boolean isSameLineSegment() {
-        return false;
-    }
-
-    private boolean areThreePointsCollinear(Point p1, Point p2, Point p3) {
-        if (p1.slopeTo(p2) == p2.slopeTo(p3)) {
+    private boolean arePointsCollinear(Point p1, Point p2, Point p3) {
+        if (p1.slopeTo(p2) == p1.slopeTo(p3)) {
             return true;
         }
         return false;
     }
 
-    private boolean isLineSegmentAdded(LineSegment lineSegment) {
-        for (int i = 0; i < numberOfSegments; i++) {
-            if (lineSegments[i].toString().equals(lineSegment.toString())) {
-                return true;
-            }
+    private boolean arePointsCollinear(Point p1, Point p2, Point p3, Point p4) {
+        if (p1.slopeTo(p2) == p1.slopeTo(p3) && p1.slopeTo(p3) == p1.slopeTo(p4)) {
+            return true;
         }
         return false;
-    }
-
-    // method to order the 4 points to find its endpoints
-    private Point[] orderCollinearPoints(Point p1, Point p2, Point p3, Point p4) {
-        Point[] pointsList = new Point[4];
-        pointsList[0] = p1;
-        pointsList[1] = p2;
-        pointsList[2] = p3;
-        pointsList[3] = p4;
-        pointComparator = p1.slopeOrder();
-        Arrays.sort(pointsList, pointComparator);
-        return pointsList;
-    }
-
-    private void printCoordinates() {
-        // print the points coordinates
-        // StdOut.println();
-        // for (int i = 0; i < n; i++) {
-        //     StdOut.print(points[i] + " ");
-        // }
-        // StdOut.println();
     }
 
     public static void main(String[] args) {
         // read the n points from a file
         In in = new In(args[0]);
         int n = in.readInt();
-        StdOut.println(n);
         Point[] points = new Point[n];
         for (int i = 0; i < n; i++) {
             int x = in.readInt();
             int y = in.readInt();
             points[i] = new Point(x, y);
         }
-
-        BruteCollinearPoints bruteCollinearPoints = new BruteCollinearPoints(points);
-        LineSegment[] lineSegments = bruteCollinearPoints.segments();
-        StdOut.println("Line segments: ");
-        for (LineSegment lineSegment : lineSegments) {
-            if (lineSegment == null) break;
-            StdOut.println(lineSegment.toString() + "; ");
-        }
-
 
         // draw the points
         StdDraw.enableDoubleBuffering();
@@ -168,47 +131,11 @@ public class BruteCollinearPoints {
 
         // print and draw the line segments
         BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        StdOut.println(collinear.numberOfSegments);
         for (LineSegment segment : collinear.segments()) {
             StdOut.println(segment);
             segment.draw();
         }
         StdDraw.show();
-
-
-        // intiial testing
-        // Point origin = new Point(0, 0);
-        // Point p1 = new Point(12, 34);
-        // Point p2 = new Point(32, 53);
-        // Point p3 = new Point(342, 324);
-        // Point p4 = new Point(53, 21);
-        // // List<Point> pointList = new ArrayList<>();
-        // // pointList.add(p1);
-        // // pointList.add(p2);
-        // // pointList.add(p3);
-        // // pointList.add(p4);
-        // Point[] pointsArray = new Point[4];
-        // pointsArray[0] = p1;
-        // pointsArray[1] = p2;
-        // pointsArray[2] = p3;
-        // pointsArray[3] = p4;
-        // StdOut.println("Before ordering: ");
-        // for (Point point : pointsArray) {
-        //     StdOut.print(point + " ");
-        // }
-        //
-        // BruteCollinearPoints bruteCollinearPoints = new BruteCollinearPoints(pointsArray);
-        // pointsArray = bruteCollinearPoints.orderCollinearPoints(p1, p2, p3, p4);
-        // StdOut.println("\nAfter ordering");
-        // for (Point point : pointsArray) {
-        //     StdOut.print(point + " ");
-        // }
-
-        // Comparator<Point> comparator = p1.slopeOrder();
-        // pointList.sort(comparator);
-        // StdOut.println(pointList);
-        // for (Point point : pointList) {
-        //     StdOut.print(point.slopeTo(origin) + " ");
-        // }
-        // StdOut.println();
     }
 }
