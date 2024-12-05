@@ -56,19 +56,21 @@ public class FastCollinearPoints {
             Arrays.sort(aux, slopeComparator);
 
             // debugging
-            StdOut.println("Refference point: " + p.toString());
-            for (Point q : aux) {
-                StdOut.println(q + " - " + p.slopeTo(q));
-            }
+            // StdOut.println("Refference point: " + p.toString());
+            // for (Point q : aux) {
+            //     StdOut.println(q + " - " + p.slopeTo(q));
+            // }
 
             // 3 (or more) adjacent points are collinear (togheter with p),
             // if they have equal slopes with respect to p.
             nbOfCollinearPoints = 0;
             List<Point> collinearPoints = new ArrayList<>();
-            for (int j = 0; j < aux.length - 1; j++) {
+            for (int j = 1; j < aux.length - 1; j++) {
+                nbOfCollinearPoints = 0;
                 if (Double.compare(p.slopeTo(aux[j]), p.slopeTo(aux[j + 1])) == 0) {
                     collinearPoints = new ArrayList<>();
                     collinearPoints.add(p);
+                    // nbOfCollinearPoints = 1;
                     while (j < aux.length - 1 &&
                             Double.compare(p.slopeTo(aux[j]), p.slopeTo(aux[j + 1])) == 0) {
                         nbOfCollinearPoints++;
@@ -80,33 +82,33 @@ public class FastCollinearPoints {
                     if (j + 1 < aux.length) {
                         collinearPoints.add(aux[j + 1]);
                     }
-                    break;
+                    if (nbOfCollinearPoints >= 3) {
+                        collinearPoints.sort(Point::compareTo);
+                        StdOut.println("Collinear points");
+                        for (Point q : collinearPoints) {
+                            StdOut.println(q + " - " + p.slopeTo(q));
+                        }
+                        StdOut.println();
+
+                        // StdOut.println(p.toString() + " - " + collinearPoints.get(0));
+                        if (p.compareTo(collinearPoints.get(0)) == 0) {
+                            StdOut.println("Exista linie");
+                            Point lastCollinearPoint = collinearPoints.get(
+                                    collinearPoints.size() - 1);
+                            LineSegment newLineSegment = new LineSegment(p, lastCollinearPoint);
+                            lineSegments.add(newLineSegment);
+                            numberOfSegments++;
+                        }
+                    }
                 }
             }
             // add line segment
-            StdOut.println("----------------------------------");
+            // StdOut.println("----------------------------------");
             // StdOut.println("Vertical colliniar points?");
             // for (Point q : collinearPoints) {
             //     StdOut.println(q + " - " + p.slopeTo(q));
             // }
             // StdOut.println("----------------------------------");
-
-            if (nbOfCollinearPoints >= 3) {
-                collinearPoints.sort(Point::compareTo);
-                StdOut.println("Collinear points");
-                for (Point q : collinearPoints) {
-                    StdOut.println(q + " - " + p.slopeTo(q));
-                }
-                StdOut.println();
-
-                StdOut.println(p.toString() + " - " + collinearPoints.get(0));
-                if (p.compareTo(collinearPoints.get(0)) == 0) {
-                    Point lastCollinearPoint = collinearPoints.get(collinearPoints.size() - 1);
-                    LineSegment newLineSegment = new LineSegment(p, lastCollinearPoint);
-                    lineSegments.add(newLineSegment);
-                    numberOfSegments++;
-                }
-            }
         }
     }
 
