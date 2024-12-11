@@ -6,18 +6,23 @@
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdOut;
+
+import java.util.Comparator;
 
 public class Solver {
     private MinPQ<SearchNode> priorityQueue;
     private int moves;
+    private SearchNode solution;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         if (initial == null) {
             throw new IllegalArgumentException("Board argument is null");
         }
-        this.priorityQueue = new MinPQ<SearchNode>();
+        SearchNodeComparator comparator = new SearchNodeComparator();
+        this.priorityQueue = new MinPQ<SearchNode>(comparator);
         this.moves = 0;
         SearchNode initialNode = new SearchNode(initial, null, initial.manhattan(), 0);
         priorityQueue.insert(initialNode);
@@ -26,49 +31,40 @@ public class Solver {
         SearchNode deletedNode = initialNode;
         // debug
         int i = 0;
-        while (!deletedNode.board.isGoal() && !priorityQueue.isEmpty()) {
+        while (!deletedNode.board.isGoal() && !priorityQueue.isEmpty() && i < 5) {
             // debug
-            StdOut.println("-------Step" + i + "--------");
-            for (SearchNode node : priorityQueue) {
-                StdOut.println(node.board.toString());
-                StdOut.println("Manhattan: " + node.board.manhattan());
-                StdOut.println("Moves: " + node.moves);
-                StdOut.println("Priority: " + node.priority);
-                StdOut.println("*********************");
-                StdOut.println();
-            }
-            StdOut.println();
-
+            // StdOut.println("-------Step" + i + "--------");
+            // StdOut.println("To be deleted:\n" + deletedNode.board.toString());
+            // StdOut.println("Priority: " + deletedNode.priority);
+            // for (SearchNode node : priorityQueue) {
+            //     StdOut.println(node.board.toString());
+            //     StdOut.println("Manhattan: " + node.board.manhattan());
+            //     StdOut.println("Moves: " + node.moves);
+            //     StdOut.println("Priority: " + node.priority);
+            //     StdOut.println("*********************");
+            // }
+            // StdOut.println();
 
             // all neighboring search nodes of current node
             Iterable<Board> neighbors = deletedNode.board.neighbors();
-            // delete from the priority queue the search node with the minimum priority
-            deletedNode = priorityQueue.delMin();
-            // get first neighbor
-            // SearchNode nextCurrentNode = null;
-            for (Board board : neighbors) {
-                deletedNode = new SearchNode(board, deletedNode.board,
-                                             board.manhattan() + deletedNode.moves + 1,
-                                             deletedNode.moves + 1);
-                break;
-            }
+
             // insert onto the priority queue all neighboring search nodes
             for (Board board : neighbors) {
                 // public SearchNode(Board board, Board previousBoard, int priority, int moves)
-                SearchNode newSearchNode = new SearchNode(board, deletedNode.board,
+                SearchNode newSearchNode = new SearchNode(board, deletedNode,
                                                           board.manhattan() + deletedNode.moves,
                                                           deletedNode.moves);
                 priorityQueue.insert(newSearchNode);
-                if (deletedNode.priority > newSearchNode.priority) {
-                    deletedNode = newSearchNode;
-                }
             }
+            // delete from the priority queue the search node with the minimum priority
+            deletedNode = priorityQueue.delMin();
             i++;
         }
-        StdOut.println(deletedNode.board.toString());
-        StdOut.println("Manhattan: " + deletedNode.board.manhattan());
-        StdOut.println("Moves: " + deletedNode.moves);
-        StdOut.println("Priority: " + deletedNode.priority);
+        this.solution = deletedNode;
+        // StdOut.println("Solution\n" + deletedNode.board.toString());
+        // StdOut.println("Manhattan: " + deletedNode.board.manhattan());
+        // StdOut.println("Moves: " + deletedNode.moves);
+        // StdOut.println("Priority: " + deletedNode.priority);
 
         if (priorityQueue.isEmpty()) {
             moves = -1;
@@ -90,47 +86,45 @@ public class Solver {
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
+        Queue<Board> solutionSequence = new Queue<>();
+        solutionSequence.enqueue(solution.board);
+        if (this.isSolvable()) {
+            SearchNode node;
+            node = solution;
+            while (node.previousNode != null) {
+                node = node.previousNode;
+                solutionSequence.enqueue(node.board);
+            }
+            return solutionSequence;
+        }
         return null;
     }
 
-    // private SearchNode findMinPriorityNode (MinPQ<SearchNode> queue) {
-    //     SearchNode minNode = queue.delMin();
-    //     return
-    // }
-
-    private class SearchNode implements Comparable<SearchNode> {
+    private class SearchNode {
         private int priority;
         private int moves;
-        private Board previousBoard;
+        private SearchNode previousNode;
         private Board board;
 
-        public SearchNode(Board board, Board previousBoard, int priority, int moves) {
+        public SearchNode(Board board, SearchNode previousNode, int priority, int moves) {
             this.board = board;
-            this.previousBoard = previousBoard;
+            this.previousNode = previousNode;
             this.priority = priority;
             this.moves = moves;
         }
+    }
 
-        @Override
-        public int compareTo(SearchNode otherNode) {
-            // int hammingComparator = Integer.compare(this.board.hamming(),
-            //                                         otherNode.board.hamming());
-            // if (hammingComparator != 0) {
-            //     return hammingComparator;
-            // }
-            // return Integer.compare(this.board.manhattan(), otherNode.board.manhattan());
-            return Integer.compare(this.priority, otherNode.priority);
+    public class SearchNodeComparator implements Comparator<SearchNode> {
+        public SearchNodeComparator() {
+
         }
 
-        // public class PlayerRankingComparator implements Comparator<SearchNode> {
-        //     public int compare(SearchNode o1, SearchNode o2) {
-        //         int hammingComparator = Integer.compare(o1.board.hamming(), o2.board.hamming());
-        //         if (hammingComparator != 0) {
-        //             return hammingComparator;
-        //         }
-        //         return Integer.compare(o1.board.manhattan(), o2.board.manhattan());
-        //     }
-        // }
+        @Override
+        public int compare(SearchNode node1, SearchNode node2) {
+            StdOut.println("Prioritites" + node1.priority + " " + node2.priority);
+            return Integer.compare(node1.priority, node2.priority);
+        }
+
     }
 
     public static void main(String[] args) {
@@ -146,14 +140,14 @@ public class Solver {
         // solve the puzzle
         Solver solver = new Solver(initial);
 
-
+        StdOut.println("-----Main----");
         // print solution to standard output
-        // if (!solver.isSolvable())
-        //     StdOut.println("No solution possible");
-        // else {
-        //     StdOut.println("Minimum number of moves = " + solver.moves());
-        //     for (Board board : solver.solution())
-        //         StdOut.println(board);
-        // }
+        if (!solver.isSolvable())
+            StdOut.println("No solution possible");
+        else {
+            StdOut.println("Minimum number of moves = " + solver.moves());
+            for (Board board : solver.solution())
+                StdOut.println(board);
+        }
     }
 }
