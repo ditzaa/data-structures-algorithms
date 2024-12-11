@@ -11,6 +11,10 @@ import edu.princeton.cs.algs4.StdOut;
 public class Board {
     private int boardSize;
     private int[][] tiles;
+    // for solver
+    // protected int priority;
+    // protected int moves;
+    // protected Board initialBoard;
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
@@ -22,7 +26,6 @@ public class Board {
                 this.tiles[i][j] = tiles[i][j];
             }
         }
-
     }
 
     // string representation of this board
