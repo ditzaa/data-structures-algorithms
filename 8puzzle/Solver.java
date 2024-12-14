@@ -6,7 +6,7 @@
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
-import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Comparator;
@@ -30,20 +30,29 @@ public class Solver {
         // Repeat this procedure until the search node dequeued corresponds to the goal board.
         SearchNode deletedNode = initialNode;
         // debug
+        // StdOut.println("-------Step" + 0 + "--------");
+        // StdOut.println(deletedNode.board.toString());
+        // StdOut.println("Manhattan: " + deletedNode.board.manhattan());
+        // StdOut.println("Moves: " + deletedNode.moves);
+        // StdOut.println("Priority: " + deletedNode.priority);
+        // StdOut.println("*********************");
         int i = 0;
         while (!deletedNode.board.isGoal() && !priorityQueue.isEmpty() && i < 5) {
             // debug
-            // StdOut.println("-------Step" + i + "--------");
+            StdOut.println("-------Step" + i + "--------");
             // StdOut.println("To be deleted:\n" + deletedNode.board.toString());
             // StdOut.println("Priority: " + deletedNode.priority);
-            // for (SearchNode node : priorityQueue) {
-            //     StdOut.println(node.board.toString());
-            //     StdOut.println("Manhattan: " + node.board.manhattan());
-            //     StdOut.println("Moves: " + node.moves);
-            //     StdOut.println("Priority: " + node.priority);
-            //     StdOut.println("*********************");
-            // }
-            // StdOut.println();
+            for (SearchNode node : priorityQueue) {
+                StdOut.println(node.board.toString());
+                StdOut.println("Manhattan: " + node.board.manhattan());
+                StdOut.println("Moves: " + node.moves);
+                StdOut.println("Priority: " + node.priority);
+                StdOut.println("*********************");
+            }
+            StdOut.println();
+
+            // delete from the priority queue the search node with the minimum priority
+            deletedNode = priorityQueue.delMin();
 
             // all neighboring search nodes of current node
             Iterable<Board> neighbors = deletedNode.board.neighbors();
@@ -53,11 +62,12 @@ public class Solver {
                 // public SearchNode(Board board, Board previousBoard, int priority, int moves)
                 SearchNode newSearchNode = new SearchNode(board, deletedNode,
                                                           board.manhattan() + deletedNode.moves,
-                                                          deletedNode.moves);
-                priorityQueue.insert(newSearchNode);
+                                                          deletedNode.moves + 1);
+                // StdOut.println("exista vecini");
+                if (!board.equals(newSearchNode.previousNode.board)) {
+                    priorityQueue.insert(newSearchNode);
+                }
             }
-            // delete from the priority queue the search node with the minimum priority
-            deletedNode = priorityQueue.delMin();
             i++;
         }
         this.solution = deletedNode;
@@ -86,14 +96,14 @@ public class Solver {
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        Queue<Board> solutionSequence = new Queue<>();
-        solutionSequence.enqueue(solution.board);
+        Stack<Board> solutionSequence = new Stack<>();
+        solutionSequence.push(solution.board);
         if (this.isSolvable()) {
             SearchNode node;
             node = solution;
             while (node.previousNode != null) {
                 node = node.previousNode;
-                solutionSequence.enqueue(node.board);
+                solutionSequence.push(node.board);
             }
             return solutionSequence;
         }
@@ -121,7 +131,7 @@ public class Solver {
 
         @Override
         public int compare(SearchNode node1, SearchNode node2) {
-            StdOut.println("Prioritites" + node1.priority + " " + node2.priority);
+            // StdOut.println("Prioritites" + node1.priority + " " + node2.priority);
             return Integer.compare(node1.priority, node2.priority);
         }
 
