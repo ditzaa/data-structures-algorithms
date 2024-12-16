@@ -6,7 +6,6 @@
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
     private int boardSize;
@@ -168,7 +167,27 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
-        return null;
+        // coordinates for pair of tiles
+        int row1 = 0;
+        int row2 = 1;
+        int col1 = 0;
+        int col2 = 0;
+
+        // check if any of the tiles is blank they have the same coordinates
+        while (this.tiles[row1][col1] == 0) {
+            col1++;
+        }
+        while (this.tiles[row2][col2] == 0) {
+            col2++;
+        }
+
+        Board twin = this.copy();
+
+        // exchange tiles for creating a twin
+        // exchangeTiles(int[][] tiles, int row0, int col0, int row1, int col1)
+        exchangeTiles(twin.tiles, row1, col1, row2, col2);
+        // StdOut.print("In functie \n" + twin.toString());
+        return twin;
     }
 
     private int findRowTile(int number) {
@@ -222,15 +241,21 @@ public class Board {
             for (int j = 0; j < n; j++)
                 tiles[i][j] = in.readInt();
         Board initial = new Board(tiles);
-        StdOut.println(initial.toString());
+        // StdOut.println("Initial:");
+        // StdOut.println(initial.toString());
         // StdOut.println("Hamming: " + initial.hamming());
         // StdOut.println("Manhattan: " + initial.manhattan());
         // StdOut.println("Is goal: " + initial.isGoal());
-        Iterable<Board> iterable = initial.neighbors();
-        StdOut.println("Vecini");
-        for (Board board : iterable) {
-            StdOut.print(board.toString());
-        }
+        // Iterable<Board> iterable = initial.neighbors();
+        // StdOut.println("Vecini");
+        // for (Board board : iterable) {
+        //     StdOut.print(board.toString());
+        // }
+
+        // create twin
+        // StdOut.println("Twin:");
+        // Board twin = initial.twin();
+        // StdOut.println(twin.toString());
 
         // // declare a goal 3x3 array
         // int[][] goal3Tiles = new int[3][3];
