@@ -4,16 +4,11 @@
  *  Description:
  **************************************************************************** */
 
-import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 
 public class Board {
     private int boardSize;
     private int[][] tiles;
-    // for solver
-    // protected int priority;
-    // protected int moves;
-    // protected Board initialBoard;
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
@@ -82,8 +77,6 @@ public class Board {
                 col = findColTile(goalNumber);
                 // calculate nb of moves to replace the current tile with the goal one
                 int newDistance = Math.abs(i - row) + Math.abs(j - col);
-                // StdOut.println(goalNumber + " " + newDistance + " (" + i + "," + row + "; " +
-                //                        j + "," + col + ")");
                 distance += newDistance;
                 goalNumber++;
             }
@@ -234,18 +227,19 @@ public class Board {
     // unit testing (not graded)
     public static void main(String[] args) {
         // create initial board from file
-        In in = new In(args[0]);
-        int n = in.readInt();
-        int[][] tiles = new int[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                tiles[i][j] = in.readInt();
-        Board initial = new Board(tiles);
+        // In in = new In(args[0]);
+        // int n = in.readInt();
+        // int[][] tiles = new int[n][n];
+        // for (int i = 0; i < n; i++)
+        //     for (int j = 0; j < n; j++)
+        //         tiles[i][j] = in.readInt();
+        // Board initial = new Board(tiles);
         // StdOut.println("Initial:");
         // StdOut.println(initial.toString());
         // StdOut.println("Hamming: " + initial.hamming());
         // StdOut.println("Manhattan: " + initial.manhattan());
         // StdOut.println("Is goal: " + initial.isGoal());
+
         // Iterable<Board> iterable = initial.neighbors();
         // StdOut.println("Vecini");
         // for (Board board : iterable) {
@@ -256,19 +250,6 @@ public class Board {
         // StdOut.println("Twin:");
         // Board twin = initial.twin();
         // StdOut.println(twin.toString());
-
-        // // declare a goal 3x3 array
-        // int[][] goal3Tiles = new int[3][3];
-        // int nb = 1;
-        // for (int i = 0; i < n; i++)
-        //     for (int j = 0; j < n; j++) {
-        //         goal3Tiles[i][j] = nb;
-        //         nb++;
-        //     }
-        // goal3Tiles[2][2] = 0;
-        // Board goal3Board = new Board(goal3Tiles);
-        // StdOut.println(goal3Board.toString());
-        // StdOut.println("Is equal: " + initial.equals(goal3Board));
 
         // // solve the puzzle
         // Solver solver = new Solver(initial);

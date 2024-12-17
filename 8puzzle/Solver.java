@@ -12,127 +12,70 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.Comparator;
 
 public class Solver {
-    private MinPQ<SearchNode> priorityQueue;
     private int moves;
     private SearchNode solution;
-    private Board initial;
     private boolean isSolvable;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         if (initial == null) {
-            throw new IllegalArgumentException("Board argument is null");
+            throw new IllegalArgumentException("Solver argument is null");
         }
-        this.initial = initial;
         this.moves = 0;
+
         // initialize priority queue
         SearchNodeComparator comparator = new SearchNodeComparator();
-        this.priorityQueue = new MinPQ<SearchNode>(comparator);
+        MinPQ<SearchNode> priorityQueue = new MinPQ<SearchNode>(comparator);
+
+        // insert intial node
         SearchNode initialNode = new SearchNode(initial, null, initial.manhattan(), 0);
         priorityQueue.insert(initialNode);
 
-        // go with twin priority tree in parallel to check if it board is solvable
+        // twin priority tree in parallel to check if the board is solvable
         MinPQ<SearchNode> priorityQueueTwin = new MinPQ<SearchNode>(comparator);
         Board twin = initial.twin();
         SearchNode initialNodeTwin = new SearchNode(twin, null, twin.manhattan(), 0);
         priorityQueueTwin.insert(initialNodeTwin);
 
-        // Repeat this procedure until the search node dequeued corresponds to the goal board.
         SearchNode deletedNode = initialNode;
         SearchNode deletedNodeTwin = initialNodeTwin;
-        // nodes for critical optimization
-        SearchNode criticalNode = initialNode;
-        SearchNode criticalNodeTwin = initialNodeTwin;
 
-        // debug
-        // StdOut.println("-------Step" + 0 + "--------");
-        // StdOut.println(deletedNode.board.toString());
-        // StdOut.println("Manhattan: " + deletedNode.board.manhattan());
-        // StdOut.println("Moves: " + deletedNode.moves);
-        // StdOut.println("Priority: " + deletedNode.priority);
-        // StdOut.println("*********************");
-        int i = 0;
+        // Repeat this procedure until the search node dequeued corresponds to the goal board.
+        //  or have proof that board is unsolvable
         while (!deletedNode.board.isGoal() && !deletedNodeTwin.board.isGoal()) {
-            // debug
-            StdOut.println("-------Step" + i + "--------");
-            // StdOut.println("To be deleted:\n" + deletedNode.board.toString());
-            // StdOut.println("Priority: " + deletedNode.priority);
-            for (SearchNode node : priorityQueue) {
-                StdOut.println(node.board.toString());
-                StdOut.println("Priority: " + node.priority);
-                StdOut.println("Moves: " + node.moves);
-                StdOut.println("Manhattan: " + node.board.manhattan());
-                StdOut.println("*********************");
-            }
-            StdOut.println();
-
-            // delete from the priority queue the search node with the minimum priority
+            // delete from the priority queues the search nodes with the minimum priority
             deletedNode = priorityQueue.delMin();
             deletedNodeTwin = priorityQueueTwin.delMin();
 
-            // all neighboring search nodes of current node
+            // all neighboring search nodes of current nodes
             Iterable<Board> neighbors = deletedNode.board.neighbors();
             Iterable<Board> neighborsTwin = deletedNodeTwin.board.neighbors();
 
-            // debug
-            StdOut.println("Critical optimization:");
-            StdOut.println(criticalNode.board.toString());
-            StdOut.println("*********************");
-
-            // insert onto the priority queue all neighboring search nodes
-
+            // insert onto the priority queues all neighboring search nodes
             for (Board board : neighbors) {
-                // public SearchNode(Board board, Board previousBoard, int priority, int moves)
-                SearchNode newSearchNode = new SearchNode(board, deletedNode,
-                                                          board.manhattan() + deletedNode.moves + 1,
-                                                          deletedNode.moves + 1);
-
-                if (!board.equals(criticalNode.board)) {
+                if (deletedNode.previousNode == null ||
+                        !board.equals(deletedNode.previousNode.board)) {
+                    SearchNode newSearchNode = new SearchNode(board, deletedNode,
+                                                              board.manhattan() + deletedNode.moves
+                                                                      + 1,
+                                                              deletedNode.moves + 1);
                     priorityQueue.insert(newSearchNode);
                 }
-
-                // critical optimization
-                // if (!board.equals(newSearchNode.previousNode.board)) {
-                //     // check for previous nodes
-                //     if (newSearchNode.previousNode.previousNode != null) {
-                //         if (!board.equals(newSearchNode.previousNode.previousNode.board)) {
-                //             priorityQueue.insert(newSearchNode);
-                //         }
-                //     }
-                //     else {
-                //         priorityQueue.insert(newSearchNode);
-                //     }
-                // }
             }
 
             for (Board board : neighborsTwin) {
-                // public SearchNode(Board board, Board previousBoard, int priority, int moves)
-                SearchNode newSearchNode = new SearchNode(board, deletedNodeTwin,
-                                                          board.manhattan() + deletedNodeTwin.moves
-                                                                  + 1,
-                                                          deletedNodeTwin.moves + 1);
-
-                if (!board.equals(criticalNode.board)) {
+                if (deletedNodeTwin.previousNode == null ||
+                        !board.equals(deletedNodeTwin.previousNode.board)) {
+                    SearchNode newSearchNode = new SearchNode(board, deletedNodeTwin,
+                                                              board.manhattan()
+                                                                      + deletedNodeTwin.moves + 1,
+                                                              deletedNodeTwin.moves + 1);
                     priorityQueueTwin.insert(newSearchNode);
                 }
-                // if (!board.equals(newSearchNode.previousNode.board)) {
-                //     // check for previous nodes
-                //     if (newSearchNode.previousNode.previousNode != null) {
-                //         if (!board.equals(newSearchNode.previousNode.previousNode.board)) {
-                //             priorityQueueTwin.insert(newSearchNode);
-                //         }
-                //     }
-                //     else {
-                //         priorityQueueTwin.insert(newSearchNode);
-                //     }
-                //
-                // }
 
             }
-            criticalNode = deletedNode;
-            criticalNodeTwin = deletedNodeTwin;
-            i++;
         }
+
         if (deletedNode.board.isGoal()) {
             this.solution = deletedNode;
             this.isSolvable = true;
@@ -142,11 +85,6 @@ public class Solver {
             this.isSolvable = false;
             moves = -1;
         }
-
-        // StdOut.println("Solution\n" + deletedNode.board.toString());
-        // StdOut.println("Manhattan: " + deletedNode.board.manhattan());
-        // StdOut.println("Moves: " + deletedNode.moves);
-        // StdOut.println("Priority: " + deletedNode.priority);
     }
 
     // is the initial board solvable? (see below)
@@ -156,31 +94,29 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return moves;
+        return this.moves;
     }
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        Stack<Board> solutionSequence = new Stack<>();
-        solutionSequence.push(solution.board);
-        if (this.isSolvable()) {
-            SearchNode node;
-            node = solution;
-            while (node.previousNode != null) {
-                node = node.previousNode;
-                solutionSequence.push(node.board);
-            }
-        }
-        else {
+        if (!this.isSolvable()) {
             return null;
         }
+        Stack<Board> solutionSequence = new Stack<>();
+        solutionSequence.push(solution.board);
+        SearchNode node;
+        node = solution;
+        while (node.previousNode != null) {
+            node = node.previousNode;
+            solutionSequence.push(node.board);
+        }
+
         return solutionSequence;
     }
 
     private class SearchNode {
         private int priority;
         private int moves;
-        // private int manhattan;
         private SearchNode previousNode;
         private Board board;
 
@@ -189,7 +125,6 @@ public class Solver {
             this.previousNode = previousNode;
             this.priority = priority;
             this.moves = moves;
-            // this.manhattan = board.manhattan();
         }
     }
 
@@ -200,7 +135,6 @@ public class Solver {
 
         @Override
         public int compare(SearchNode node1, SearchNode node2) {
-            // StdOut.println("Prioritites" + node1.priority + " " + node2.priority);
             return Integer.compare(node1.priority, node2.priority);
         }
     }
@@ -217,8 +151,7 @@ public class Solver {
 
         // solve the puzzle
         Solver solver = new Solver(initial);
-
-        // StdOut.println("-----Main----");
+        
         // print solution to standard output
         if (!solver.isSolvable())
             StdOut.println("No solution possible");
